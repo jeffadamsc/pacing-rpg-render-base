@@ -245,6 +245,7 @@ class PublicSourceTests(unittest.TestCase):
         self.assertIn("EXPOSE 22", recipe)
         self.assertIn("ARG RUNTIME_MANIFEST_SHA256", recipe)
         self.assertIn("--require-hashes", recipe)
+        self.assertIn("--no-deps", recipe)
         self.assertIn("COPY --from=materializer /prepared/opt /opt", recipe)
         self.assertIn(
             "org.opencontainers.image.source=\"https://github.com/jeffadamsc/"

@@ -23,7 +23,7 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/opt/sfw-static/site-packages
 COPY requirements/sfw_static_runtime_requirements.txt /tmp/sfw-static-runtime-requirements.txt
-RUN python3 -m pip install --no-cache-dir --require-hashes \
+RUN python3 -m pip install --no-cache-dir --no-deps --require-hashes \
       --target /opt/sfw-static/site-packages \
       -r /tmp/sfw-static-runtime-requirements.txt \
     && rm -f /tmp/sfw-static-runtime-requirements.txt
