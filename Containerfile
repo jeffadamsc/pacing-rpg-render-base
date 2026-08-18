@@ -19,16 +19,14 @@ ARG RUNTIME_MANIFEST_SHA256
 RUN python3 -c 'import re,sys; assert re.fullmatch(r"[0-9a-f]{40}",sys.argv[1]); assert re.fullmatch(r"[0-9a-f]{64}",sys.argv[2])' \
     "${PUBLIC_SOURCE_REVISION}" "${RUNTIME_MANIFEST_SHA256}"
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PYTHONDONTWRITEBYTECODE=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/opt/sfw-static/site-packages
 COPY requirements/sfw_static_runtime_requirements.txt /tmp/sfw-static-runtime-requirements.txt
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates openssh-server \
-    && python3 -m pip install --no-cache-dir --require-hashes \
-       -r /tmp/sfw-static-runtime-requirements.txt \
-    && rm -f /tmp/sfw-static-runtime-requirements.txt \
-    && rm -rf /var/lib/apt/lists/*
+RUN python3 -m pip install --no-cache-dir --require-hashes \
+      --target /opt/sfw-static/site-packages \
+      -r /tmp/sfw-static-runtime-requirements.txt \
+    && rm -f /tmp/sfw-static-runtime-requirements.txt
 
 COPY --from=materializer /prepared/opt /opt
 COPY image-manifest.json /opt/sfw-static/image-manifest.json
@@ -42,7 +40,6 @@ COPY LICENSES /usr/share/sfw-static/source/LICENSES
 RUN mkdir -p \
       /opt/sfw-static/runtime/ComfyUI/models/checkpoints \
       /opt/sfw-static/runtime/ComfyUI/models/ultralytics/bbox \
-      /run/sshd \
     && ln -s \
       /opt/sfw-static/models/by-sha/ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1/NoobAI-XL-v1.0.safetensors \
       /opt/sfw-static/runtime/ComfyUI/models/checkpoints/NoobAI-XL-v1.0.safetensors \

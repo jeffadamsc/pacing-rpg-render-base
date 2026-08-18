@@ -33,4 +33,9 @@ fixed image paths. A controller creates canonical `image-manifest.json`, then a
 bounded external builder supplies its source revision and manifest hash as build
 arguments. The build refuses missing or malformed bindings.
 
+The `Containerfile` is the readable public reference contract. Production
+publication materializes the same files and configuration with pinned skopeo
+and umoci tools, without starting a nested container builder or changing the
+published runtime contents.
+
 See `THIRD_PARTY_NOTICES.md` and `LICENSES/` for upstream provenance and terms.

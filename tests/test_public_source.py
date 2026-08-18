@@ -234,6 +234,15 @@ class PublicSourceTests(unittest.TestCase):
         recipe = (ROOT / "Containerfile").read_text(encoding="utf-8")
         self.assertEqual(recipe.count(f"FROM {BASE_IMAGE}"), 2)
         self.assertIn("ARG PUBLIC_SOURCE_REVISION", recipe)
+        self.assertIn("--target /opt/sfw-static/site-packages", recipe)
+        self.assertIn("PYTHONPATH=/opt/sfw-static/site-packages", recipe)
+        runtime_stage = recipe.split(" AS runtime", 1)[1]
+        self.assertNotIn("apt-get install", runtime_stage)
+        self.assertNotIn("buildah", recipe.casefold())
+        self.assertNotIn("podman", recipe.casefold())
+        self.assertNotIn("docker build", recipe.casefold())
+        self.assertIn('ENTRYPOINT ["/opt/sfw-static/start-sshd.sh"]', recipe)
+        self.assertIn("EXPOSE 22", recipe)
         self.assertIn("ARG RUNTIME_MANIFEST_SHA256", recipe)
         self.assertIn("--require-hashes", recipe)
         self.assertIn("COPY --from=materializer /prepared/opt /opt", recipe)
@@ -258,6 +267,38 @@ class PublicSourceTests(unittest.TestCase):
             "face_yolov8m.pt",
             recipe,
         )
+
+    def test_registry_native_contract_has_exact_runtime_configuration(self) -> None:
+        recipe = (ROOT / "Containerfile").read_text(encoding="utf-8")
+        startup = (ROOT / "scripts/start-sshd.sh").read_text(encoding="utf-8")
+        for label in (
+            "org.opencontainers.image.source",
+            "org.opencontainers.image.revision",
+            "org.opencontainers.image.licenses",
+            "org.pacing-rpg.runtime-manifest-sha256",
+            "org.pacing-rpg.runtime-layout-version",
+        ):
+            self.assertIn(label, recipe)
+        for target in (
+            "/opt/sfw-static/models/by-sha/"
+            "ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1/"
+            "NoobAI-XL-v1.0.safetensors",
+            "/opt/sfw-static/models/by-sha/"
+            "717923c19b3f4bbf5250b728f1fa6b2cb72a33aed1d236ea9caf0e21ad943e5f/"
+            "face_yolov8m.pt",
+        ):
+            self.assertIn(target, recipe)
+        for setting in (
+            "PIP_DISABLE_PIP_VERSION_CHECK=1",
+            "PYTHONDONTWRITEBYTECODE=1",
+            "PYTHONPATH=/opt/sfw-static/site-packages",
+        ):
+            self.assertIn(setting, recipe)
+        self.assertRegex(startup, r"mkdir -p [^\n]*/run/sshd")
+        self.assertNotIn("/run/sshd", "\n".join(
+            line for line in recipe.splitlines()
+            if line.lstrip().startswith(("COPY ", "ADD "))
+        ))
 
     def test_startup_is_install_free_and_workflow_never_builds_image(self) -> None:
         startup = (ROOT / "scripts/start-sshd.sh").read_text(encoding="utf-8")
