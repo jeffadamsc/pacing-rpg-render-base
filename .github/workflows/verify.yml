@@ -1,0 +1,24 @@
+name: Verify public runtime source
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-tests:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run offline tests
+        run: python3 -m unittest discover -v
+
+# The hosted runner intentionally does not build the large OCI image.

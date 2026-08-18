@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "layout_version": 1,
+  "base_image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04@sha256:61a4aafb0094cd773f11eefa378929d5a687bd775febeb78eac62fc824141fb5",
+  "runtime": {
+    "python_version": "3.11",
+    "torch_version": "2.4.1+cu124",
+    "torchvision_version": "0.19.1+cu124",
+    "torchaudio_version": "2.4.1+cu124",
+    "cuda_version": "12.4",
+    "gpu_runtime_compatibility": {
+      "accelerator_vendor": "NVIDIA",
+      "cuda_runtime": "12.4",
+      "torch_cuda_required": true
+    },
+    "requirements_sha256": "cbbb375af6d8165290797ab413ab338be8ee15abbf1f33a64a04b89a348640cb"
+  },
+  "sources": {
+    "comfyui": {
+      "url": "https://github.com/comfyanonymous/ComfyUI.git",
+      "revision": "7c8450ef2b720bb096f0d94ff933c62fd174cb57",
+      "archive_sha256": "ca23d01341b8d36e4f794f5cf06b532554944fddfb2d9e3abe5f1ad82692ccd1"
+    },
+    "impact-pack": {
+      "url": "https://github.com/ltdrdata/ComfyUI-Impact-Pack.git",
+      "revision": "429d0159ad429e64d2b3916e6e7be9c22d025c3c",
+      "archive_sha256": "0e872810f1718d58d41ef4ad95bab6dd3e31eb9cf1f1312e875d0d3c97569348"
+    },
+    "impact-subpack": {
+      "url": "https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git",
+      "revision": "50c7b71a6a224734cc9b21963c6d1926816a97f1",
+      "archive_sha256": "a059290adcb1021a7f230a1d5d4030bf87f28bc44b02ca3b567cf58365dba685"
+    }
+  },
+  "models": {
+    "checkpoint": {
+      "url": "https://huggingface.co/Laxhar/noobai-XL-1.0/resolve/70dee4d903b83cc6d1e8d12e65051cfdbcf54ab3/NoobAI-XL-v1.0.safetensors",
+      "filename": "NoobAI-XL-v1.0.safetensors",
+      "size": 6938040416,
+      "sha256": "ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1",
+      "path": "/opt/sfw-static/models/by-sha/ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1/NoobAI-XL-v1.0.safetensors"
+    },
+    "face_model": {
+      "url": "https://huggingface.co/Bingsu/adetailer/resolve/53cc19de382014514d9d4038601d261a7faa9b7b/face_yolov8m.pt",
+      "filename": "face_yolov8m.pt",
+      "size": 52026019,
+      "sha256": "717923c19b3f4bbf5250b728f1fa6b2cb72a33aed1d236ea9caf0e21ad943e5f",
+      "path": "/opt/sfw-static/models/by-sha/717923c19b3f4bbf5250b728f1fa6b2cb72a33aed1d236ea9caf0e21ad943e5f/face_yolov8m.pt"
+    }
+  }
+}
