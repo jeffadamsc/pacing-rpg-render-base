@@ -119,6 +119,12 @@ class PublicSourceTests(unittest.TestCase):
         self.assertEqual(inputs["base_image"], BASE_IMAGE)
         self.assertEqual(inputs["models"]["checkpoint"]["size"], 6_938_040_416)
         self.assertEqual(inputs["models"]["face_model"]["size"], 52_026_019)
+        for record in inputs["models"].values():
+            self.assertTrue(
+                record["path"].startswith(
+                    "/workspace/sfw-static-public/models/by-sha/"
+                )
+            )
 
     def test_fetch_verified_never_publishes_wrong_bytes(self) -> None:
         with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
@@ -174,7 +180,7 @@ class PublicSourceTests(unittest.TestCase):
             canonical_json_text(manifest),
         )
 
-    def test_materialize_runtime_builds_exact_offline_layout(self) -> None:
+    def test_materialize_runtime_excludes_external_models(self) -> None:
         source_records = {}
         for name in ("comfyui", "impact-pack", "impact-subpack"):
             repository, revision, archive_sha256 = _make_git_source(
@@ -202,7 +208,7 @@ class PublicSourceTests(unittest.TestCase):
                     "size": len(model_bytes),
                     "sha256": model_sha256,
                     "path": (
-                        f"/opt/sfw-static/models/by-sha/{model_sha256}/"
+                        f"/workspace/sfw-static-public/models/by-sha/{model_sha256}/"
                         "fixture-model.bin"
                     ),
                 }
@@ -223,11 +229,8 @@ class PublicSourceTests(unittest.TestCase):
                 / "opt/sfw-static/runtime/ComfyUI/custom_nodes/ComfyUI-Impact-Subpack"
             ).is_dir()
         )
-        retained = (
-            image_root
-            / f"opt/sfw-static/models/by-sha/{model_sha256}/fixture-model.bin"
-        )
-        self.assertEqual(retained.read_bytes(), model_bytes)
+        self.assertFalse((image_root / "opt/sfw-static/models").exists())
+        self.assertFalse((image_root / "workspace").exists())
         self.assertFalse(any(path.name == ".git" for path in image_root.rglob("*")))
 
     def test_containerfile_uses_pinned_base_and_build_time_runtime(self) -> None:
@@ -256,18 +259,8 @@ class PublicSourceTests(unittest.TestCase):
             "org.pacing-rpg.runtime-layout-version=\"1\"",
             recipe,
         )
-        self.assertIn(
-            "/opt/sfw-static/models/by-sha/"
-            "ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1/"
-            "NoobAI-XL-v1.0.safetensors",
-            recipe,
-        )
-        self.assertIn(
-            "/opt/sfw-static/models/by-sha/"
-            "717923c19b3f4bbf5250b728f1fa6b2cb72a33aed1d236ea9caf0e21ad943e5f/"
-            "face_yolov8m.pt",
-            recipe,
-        )
+        self.assertNotIn("/opt/sfw-static/models", recipe)
+        self.assertNotIn("/workspace/sfw-static-public", recipe)
 
     def test_registry_native_contract_has_exact_runtime_configuration(self) -> None:
         recipe = (ROOT / "Containerfile").read_text(encoding="utf-8")
@@ -280,15 +273,7 @@ class PublicSourceTests(unittest.TestCase):
             "org.pacing-rpg.runtime-layout-version",
         ):
             self.assertIn(label, recipe)
-        for target in (
-            "/opt/sfw-static/models/by-sha/"
-            "ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1/"
-            "NoobAI-XL-v1.0.safetensors",
-            "/opt/sfw-static/models/by-sha/"
-            "717923c19b3f4bbf5250b728f1fa6b2cb72a33aed1d236ea9caf0e21ad943e5f/"
-            "face_yolov8m.pt",
-        ):
-            self.assertIn(target, recipe)
+        self.assertNotIn("models/by-sha", recipe)
         for setting in (
             "PIP_DISABLE_PIP_VERSION_CHECK=1",
             "PYTHONDONTWRITEBYTECODE=1",

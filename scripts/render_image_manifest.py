@@ -92,7 +92,9 @@ def _validate_inputs(inputs: Mapping[str, object]) -> None:
             raise ValueError(f"runtime model size is invalid: {name}")
         if not isinstance(raw_model.get("url"), str) or not raw_model["url"]:
             raise ValueError(f"runtime model URL is invalid: {name}")
-        expected_path = f"/opt/sfw-static/models/by-sha/{sha256}/{filename}"
+        expected_path = (
+            f"/workspace/sfw-static-public/models/by-sha/{sha256}/{filename}"
+        )
         if raw_model.get("path") != expected_path:
             raise ValueError(f"runtime model path is invalid: {name}")
 

@@ -23,8 +23,9 @@ assets kept outside this repository.
   <https://huggingface.co/Bingsu/adetailer/tree/53cc19de382014514d9d4038601d261a7faa9b7b>.
 
 Exact model filenames, revisions, byte sizes, SHA-256 values, and download URLs
-are recorded in `runtime-inputs.json`. Exact source archive hashes prove the
-normalized source trees used by the image build.
+are recorded in `runtime-inputs.json`. The model files are external runtime
+requirements and are not included in the OCI image. Exact source archive hashes
+prove the normalized source trees used by the image build.
 
 The locked Python dependency file is
 `requirements/sfw_static_runtime_requirements.txt`; each package artifact is

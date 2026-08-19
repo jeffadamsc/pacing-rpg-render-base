@@ -38,14 +38,14 @@
       "filename": "NoobAI-XL-v1.0.safetensors",
       "size": 6938040416,
       "sha256": "ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1",
-      "path": "/opt/sfw-static/models/by-sha/ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1/NoobAI-XL-v1.0.safetensors"
+      "path": "/workspace/sfw-static-public/models/by-sha/ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1/NoobAI-XL-v1.0.safetensors"
     },
     "face_model": {
       "url": "https://huggingface.co/Bingsu/adetailer/resolve/53cc19de382014514d9d4038601d261a7faa9b7b/face_yolov8m.pt",
       "filename": "face_yolov8m.pt",
       "size": 52026019,
       "sha256": "717923c19b3f4bbf5250b728f1fa6b2cb72a33aed1d236ea9caf0e21ad943e5f",
-      "path": "/opt/sfw-static/models/by-sha/717923c19b3f4bbf5250b728f1fa6b2cb72a33aed1d236ea9caf0e21ad943e5f/face_yolov8m.pt"
+      "path": "/workspace/sfw-static-public/models/by-sha/717923c19b3f4bbf5250b728f1fa6b2cb72a33aed1d236ea9caf0e21ad943e5f/face_yolov8m.pt"
     }
   }
 }

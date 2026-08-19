@@ -7,7 +7,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates git \
     && rm -rf /var/lib/apt/lists/*
 COPY runtime-inputs.json /build/source/runtime-inputs.json
-COPY scripts/fetch_verified.py scripts/materialize_runtime.py /build/source/scripts/
+COPY scripts/materialize_runtime.py /build/source/scripts/
 RUN python3 /build/source/scripts/materialize_runtime.py \
     --inputs /build/source/runtime-inputs.json \
     --destination /prepared
@@ -37,16 +37,7 @@ COPY requirements /usr/share/sfw-static/source/requirements
 COPY scripts /usr/share/sfw-static/source/scripts
 COPY LICENSES /usr/share/sfw-static/source/LICENSES
 
-RUN mkdir -p \
-      /opt/sfw-static/runtime/ComfyUI/models/checkpoints \
-      /opt/sfw-static/runtime/ComfyUI/models/ultralytics/bbox \
-    && ln -s \
-      /opt/sfw-static/models/by-sha/ff827fc34584853257d6de64b8bc3e34156814f6b0cfd1a5112a5e9164806df1/NoobAI-XL-v1.0.safetensors \
-      /opt/sfw-static/runtime/ComfyUI/models/checkpoints/NoobAI-XL-v1.0.safetensors \
-    && ln -s \
-      /opt/sfw-static/models/by-sha/717923c19b3f4bbf5250b728f1fa6b2cb72a33aed1d236ea9caf0e21ad943e5f/face_yolov8m.pt \
-      /opt/sfw-static/runtime/ComfyUI/models/ultralytics/bbox/face_yolov8m.pt \
-    && chmod 0555 /opt/sfw-static/start-sshd.sh \
+RUN chmod 0555 /opt/sfw-static/start-sshd.sh \
     && chmod 0444 /opt/sfw-static/image-manifest.json
 
 LABEL org.opencontainers.image.source="https://github.com/jeffadamsc/pacing-rpg-render-base" \
