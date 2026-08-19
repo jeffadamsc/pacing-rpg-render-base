@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Materialize exact public sources and models into the image layout."""
+"""Materialize exact public runtime sources into the image layout."""
 
 from __future__ import annotations
 
@@ -15,12 +15,6 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
-
-try:
-    from .fetch_verified import fetch_verified
-except ImportError:  # Direct script execution in the image build.
-    from fetch_verified import fetch_verified
-
 
 SOURCE_LOCATIONS = {
     "comfyui": PurePosixPath("/opt/sfw-static/runtime/ComfyUI"),
@@ -195,7 +189,7 @@ def materialize_runtime(
     inputs: Mapping[str, object],
     destination: Path,
 ) -> Path:
-    """Build the fixed public runtime and model layout beneath an image root."""
+    """Build the fixed public runtime layout beneath an image root."""
     target = Path(destination)
     if target.exists() or target.is_symlink():
         raise FileExistsError(f"runtime destination exists: {target}")
@@ -249,18 +243,13 @@ def materialize_runtime(
                 raise ValueError(f"public model filename is invalid: {model_name}")
             if not isinstance(sha256, str) or SHA256_RE.fullmatch(sha256) is None:
                 raise ValueError(f"public model SHA-256 is invalid: {model_name}")
-            expected_path = f"/opt/sfw-static/models/by-sha/{sha256}/{filename}"
+            expected_path = (
+                f"/workspace/sfw-static-public/models/by-sha/{sha256}/{filename}"
+            )
             if raw_path != expected_path:
                 raise ValueError(f"public model path is invalid: {model_name}")
             if not isinstance(url, str) or not isinstance(size, int):
                 raise ValueError(f"public model download record is invalid: {model_name}")
-            fetch_verified(
-                url,
-                _rooted(staging, PurePosixPath(expected_path)),
-                size,
-                sha256,
-            )
-
         os.replace(staging, target)
     except BaseException:
         shutil.rmtree(staging, ignore_errors=True)

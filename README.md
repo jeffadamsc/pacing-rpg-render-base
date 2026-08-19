@@ -2,8 +2,10 @@
 
 This public repository defines a reproducible, public-only OCI runtime for the
 Pacing RPG static rendering pipeline. It contains ComfyUI, two public custom
-node projects, one public base checkpoint, one public face-detection model,
-their public license material, and the locked Python runtime. It contains no
+node projects, public model provenance, their public license material, and the
+locked Python runtime. The checkpoint and face-detection model are external
+requirements mounted below `/workspace/sfw-static-public`; the image contains no
+model bytes. It contains no
 prompts, private LoRAs, job records, generated images, or private application
 source.
 
@@ -29,7 +31,7 @@ build the image.
 
 `runtime-inputs.json` pins the base image digest, public Git revisions,
 deterministic archive hashes, public model URLs, byte sizes, SHA-256 values, and
-fixed image paths. A controller creates canonical `image-manifest.json`, then a
+fixed external-volume paths. A controller creates canonical `image-manifest.json`, then a
 bounded external builder supplies its source revision and manifest hash as build
 arguments. The build refuses missing or malformed bindings.
 
