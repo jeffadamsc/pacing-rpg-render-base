@@ -13,7 +13,7 @@
       "cuda_runtime": "12.4",
       "torch_cuda_required": true
     },
-    "requirements_sha256": "cbbb375af6d8165290797ab413ab338be8ee15abbf1f33a64a04b89a348640cb"
+    "requirements_sha256": "d9aa5e97dbab53d1115768ff923303f56296ed774718a3910dced922ef1d948d"
   },
   "sources": {
     "comfyui": {

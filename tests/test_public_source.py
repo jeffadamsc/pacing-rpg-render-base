@@ -127,6 +127,18 @@ class PublicSourceTests(unittest.TestCase):
                 )
             )
 
+    def test_runtime_lock_contains_comfy_startup_dependencies(self) -> None:
+        inputs = load_runtime_inputs(ROOT / "runtime-inputs.json")
+        lock = ROOT / "requirements/sfw_static_runtime_requirements.txt"
+        source = lock.read_text(encoding="utf-8").casefold()
+
+        self.assertEqual(
+            hashlib.sha256(lock.read_bytes()).hexdigest(),
+            inputs["runtime"]["requirements_sha256"],
+        )
+        for requirement in ("pydantic==", "pydantic-core==", "sqlalchemy=="):
+            self.assertIn(requirement, source)
+
     def test_fetch_verified_never_publishes_wrong_bytes(self) -> None:
         with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
             fetch_verified(
@@ -253,6 +265,7 @@ class PublicSourceTests(unittest.TestCase):
         self.assertIn("ARG RUNTIME_MANIFEST_SHA256", recipe)
         self.assertIn("--require-hashes", recipe)
         self.assertIn("--no-deps", recipe)
+        self.assertIn("--ignore-installed", recipe)
         self.assertIn("COPY --from=materializer /prepared/opt /opt", recipe)
         self.assertIn(
             "org.opencontainers.image.source=\"https://github.com/jeffadamsc/"
