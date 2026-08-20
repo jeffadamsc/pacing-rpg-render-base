@@ -28,7 +28,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
     && rm -f /etc/ssh/ssh_host_*
 COPY requirements/sfw_static_runtime_requirements.txt /tmp/sfw-static-runtime-requirements.txt
-RUN python3 -m pip install --no-cache-dir --no-deps --require-hashes \
+RUN python3 -m pip install --no-cache-dir --no-deps --ignore-installed --require-hashes \
       --target /opt/sfw-static/site-packages \
       -r /tmp/sfw-static-runtime-requirements.txt \
     && rm -f /tmp/sfw-static-runtime-requirements.txt
