@@ -21,4 +21,5 @@ mkdir -p /root/.ssh /run/sshd
 printf '%s\n' "${SSH_PUBLIC_KEY}" > /root/.ssh/authorized_keys
 chmod 0700 /root/.ssh
 chmod 0600 /root/.ssh/authorized_keys
+ssh-keygen -A
 exec /usr/sbin/sshd -D -e

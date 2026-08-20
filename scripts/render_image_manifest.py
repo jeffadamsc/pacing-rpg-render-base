@@ -14,8 +14,8 @@ import re
 
 PUBLIC_SOURCE_REPOSITORY = "https://github.com/jeffadamsc/pacing-rpg-render-base"
 BASE_IMAGE = (
-    "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04@"
-    "sha256:61a4aafb0094cd773f11eefa378929d5a687bd775febeb78eac62fc824141fb5"
+    "pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime@"
+    "sha256:0a3b9fedefe1f61ac4d5a9de9015c0863db27ca0fde2d4e37e6268147980b726"
 )
 SOURCE_NAMES = {"comfyui", "impact-pack", "impact-subpack"}
 MODEL_NAMES = {"checkpoint", "face_model"}

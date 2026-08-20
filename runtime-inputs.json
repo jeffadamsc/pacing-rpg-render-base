@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "layout_version": 1,
-  "base_image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04@sha256:61a4aafb0094cd773f11eefa378929d5a687bd775febeb78eac62fc824141fb5",
+  "base_image": "pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime@sha256:0a3b9fedefe1f61ac4d5a9de9015c0863db27ca0fde2d4e37e6268147980b726",
   "runtime": {
     "python_version": "3.11",
     "torch_version": "2.4.1+cu124",

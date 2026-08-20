@@ -24,8 +24,8 @@ from scripts.render_image_manifest import (
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE_IMAGE = (
-    "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04@"
-    "sha256:61a4aafb0094cd773f11eefa378929d5a687bd775febeb78eac62fc824141fb5"
+    "pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime@"
+    "sha256:0a3b9fedefe1f61ac4d5a9de9015c0863db27ca0fde2d4e37e6268147980b726"
 )
 
 
@@ -117,6 +117,7 @@ class PublicSourceTests(unittest.TestCase):
         self.assertEqual(inputs["schema"], 1)
         self.assertEqual(inputs["layout_version"], 1)
         self.assertEqual(inputs["base_image"], BASE_IMAGE)
+        self.assertNotIn("devel", inputs["base_image"])
         self.assertEqual(inputs["models"]["checkpoint"]["size"], 6_938_040_416)
         self.assertEqual(inputs["models"]["face_model"]["size"], 52_026_019)
         for record in inputs["models"].values():
@@ -240,7 +241,10 @@ class PublicSourceTests(unittest.TestCase):
         self.assertIn("--target /opt/sfw-static/site-packages", recipe)
         self.assertIn("PYTHONPATH=/opt/sfw-static/site-packages", recipe)
         runtime_stage = recipe.split(" AS runtime", 1)[1]
-        self.assertNotIn("apt-get install", runtime_stage)
+        self.assertIn("openssh-server=1:8.9p1-3ubuntu0.16", runtime_stage)
+        self.assertEqual(runtime_stage.count("openssh-server="), 1)
+        self.assertIn("--no-install-recommends", runtime_stage)
+        self.assertIn("/var/lib/apt/lists/* /var/cache/apt/*", runtime_stage)
         self.assertNotIn("buildah", recipe.casefold())
         self.assertNotIn("podman", recipe.casefold())
         self.assertNotIn("docker build", recipe.casefold())
@@ -280,6 +284,7 @@ class PublicSourceTests(unittest.TestCase):
             "PYTHONPATH=/opt/sfw-static/site-packages",
         ):
             self.assertIn(setting, recipe)
+        self.assertIn("ssh-keygen -A", startup)
         self.assertRegex(startup, r"mkdir -p [^\n]*/run/sshd")
         self.assertNotIn("/run/sshd", "\n".join(
             line for line in recipe.splitlines()

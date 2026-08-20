@@ -1,4 +1,4 @@
-FROM runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04@sha256:61a4aafb0094cd773f11eefa378929d5a687bd775febeb78eac62fc824141fb5 AS materializer
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime@sha256:0a3b9fedefe1f61ac4d5a9de9015c0863db27ca0fde2d4e37e6268147980b726 AS materializer
 
 ENV DEBIAN_FRONTEND=noninteractive \
     GIT_TERMINAL_PROMPT=0 \
@@ -12,7 +12,7 @@ RUN python3 /build/source/scripts/materialize_runtime.py \
     --inputs /build/source/runtime-inputs.json \
     --destination /prepared
 
-FROM runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04@sha256:61a4aafb0094cd773f11eefa378929d5a687bd775febeb78eac62fc824141fb5 AS runtime
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime@sha256:0a3b9fedefe1f61ac4d5a9de9015c0863db27ca0fde2d4e37e6268147980b726 AS runtime
 
 ARG PUBLIC_SOURCE_REVISION
 ARG RUNTIME_MANIFEST_SHA256
@@ -22,6 +22,11 @@ RUN python3 -c 'import re,sys; assert re.fullmatch(r"[0-9a-f]{40}",sys.argv[1]);
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/opt/sfw-static/site-packages
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       openssh-server=1:8.9p1-3ubuntu0.16 \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+    && rm -f /etc/ssh/ssh_host_*
 COPY requirements/sfw_static_runtime_requirements.txt /tmp/sfw-static-runtime-requirements.txt
 RUN python3 -m pip install --no-cache-dir --no-deps --require-hashes \
       --target /opt/sfw-static/site-packages \

@@ -9,6 +9,10 @@ model bytes. It contains no
 prompts, private LoRAs, job records, generated images, or private application
 source.
 
+The image uses a digest-pinned PyTorch runtime base for Python 3.11, PyTorch
+2.4.1, and CUDA 12.4. A pinned Ubuntu OpenSSH package supplies pod control;
+host keys are generated when each pod starts rather than baked into the image.
+
 The image must be consumed by immutable digest:
 
 ```text
